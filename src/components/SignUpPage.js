@@ -15,36 +15,47 @@ import {
   MDBDropdownToggle,
   MDBDropdownMenu,
 } from "mdb-react-ui-kit";
-import IsLawyer from "./IsLawyer";
+
+import "../css/SignUp.css";
 
 export default function SignUpPage() {
   const [whoAreYou, setWhoAreYou] = useState("Who Are You ?");
-  const [isLawyer, setIslaywer] = useState(false);
+
+  const [data, setData] = useState({});
+
   const changeWhoAreYou = (event, who) => {
-    console.log(who);
     setWhoAreYou(who);
+
+    setData({ ...data, role: who });
+
+    var x = document.getElementById("myDIV");
     if (who === "Lawyer") {
-      console.log(who)
-      var x = document.getElementById("myDIV");
-   
-        x.style.display = "block";
-     
+      x.style.display = "block";
+    } else {
+      x.style.display = "none";
     }
   };
 
+  const submit = (event) => {
+    event.preventDefault();
+  };
   return (
-    <MDBContainer fluid className="bg-dark">
+    <MDBContainer
+      fluid
+      className="bg-dark"
+      style={{ height: "100%", scrollbarColor: "gray" }}
+    >
       <MDBRow className="d-flex justify-content-center align-items-center h-100">
         <MDBCol>
           <MDBCard className="my-4">
             <MDBRow className="g-0">
               <MDBCol md="6" className="d-none d-md-block">
                 <MDBCardImage
-                  src="https://cdn.standardmedia.co.ke/images/monday/czmzmfuf14sjop7lgzwr60d0d01b75817.jpg"
+                  src="https://images.unsplash.com/photo-1589578527966-fdac0f44566c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3087&q=80"
                   alt="Sample photo"
                   className="rounded-start my-3"
                   fluid
-                  height={"100px"}
+                  style={{ height: "66%"}}
                 />
               </MDBCol>
 
@@ -56,7 +67,8 @@ export default function SignUpPage() {
                   <MDBDropdown style={{ paddingBottom: "50px" }}>
                     <MDBDropdownToggle
                       tag="a"
-                      className="btn btn-primary outline"
+                      className="btn btn-primary"
+                      style={{ textAlign: "center", outline: "all" }}
                     >
                       {whoAreYou}
                     </MDBDropdownToggle>
@@ -86,6 +98,9 @@ export default function SignUpPage() {
                         size="lg"
                         id="form1"
                         type="text"
+                        onChange={(e) => {
+                          setData({ ...data, firstName: e.target.value });
+                        }}
                       />
                     </MDBCol>
 
@@ -96,6 +111,9 @@ export default function SignUpPage() {
                         size="lg"
                         id="form2"
                         type="text"
+                        onChange={(e) => {
+                          setData({ ...data, lastName: e.target.value });
+                        }}
                       />
                     </MDBCol>
                   </MDBRow>
@@ -105,7 +123,32 @@ export default function SignUpPage() {
                     size="lg"
                     id="form6"
                     type="email"
+                    onChange={(e) => {
+                      setData({ ...data, email: e.target.value });
+                    }}
+                    onKeyUp={(e) => {
+                      if (
+                        !data.email.includes("@") &&
+                        data.email.length !== 0
+                      ) {
+                        document.getElementById("emailMsg").style.display =
+                          "block";
+                      } else {
+                        document.getElementById("emailMsg").style.display =
+                          "none";
+                      }
+                    }}
                   />
+                  <p
+                    style={{
+                      display: "none",
+                      color: "red",
+                      textSizeAdjust: "auto",
+                    }}
+                    id="emailMsg"
+                  >
+                    incorrect password
+                  </p>
 
                   <MDBInput
                     type="date"
@@ -114,6 +157,9 @@ export default function SignUpPage() {
                     wrapperClass="mb-4"
                     label="Date of birth"
                     size="lg"
+                    onChange={(e) => {
+                      setData({ ...data, dob: e.target.value });
+                    }}
                   />
 
                   <div className="d-md-flex ustify-content-start align-items-center mb-4">
@@ -121,35 +167,61 @@ export default function SignUpPage() {
                     <MDBRadio
                       name="inlineRadio"
                       id="inlineRadio1"
-                      value="option1"
+                      value="Female"
                       label="Female"
                       inline
+                      onClick={(e) => {
+                        setData({ ...data, gender: e.target.value });
+                      }}
                     />
                     <MDBRadio
                       name="inlineRadio"
                       id="inlineRadio2"
-                      value="option2"
+                      value="Male"
                       label="Male"
                       inline
+                      onClick={(e) => {
+                        setData({ ...data, gender: e.target.value });
+                      }}
                     />
                     <MDBRadio
                       name="inlineRadio"
                       id="inlineRadio3"
-                      value="option3"
+                      value="Other"
                       label="Other"
                       inline
+                      onClick={(e) => {
+                        setData({ ...data, gender: e.target.value });
+                      }}
                     />
                   </div>
+                  <p style={{ left: "5px", textAlign: "left" }}>
+                    government id proff
+                  </p>
                   <MDBInput
-                    placeholder="Enter BirthDate"
                     name="government id proff"
-                    label="government id proff"
+                    label=""
                     wrapperClass="mb-4"
                     size="lg"
                     type="file"
+                    onChange={(e) => {
+                      setData({ ...data, govtIdProff: e.target.files[0] });
+                    }}
                   />
-                  <div id="myDIV">
-                    <IsLawyer />
+
+                  <div id="myDIV" style={{ display: "none" }}>
+                    <p style={{ left: "5px", textAlign: "left" }}>
+                      please give your law certificate
+                    </p>
+                    <MDBInput
+                      wrapperClass="mb-4"
+                      size="lg"
+                      type="file"
+                      name="certificate"
+                      onChange={(e) => {
+                        setData({ ...data, lawCertficate: e.target.files[0] });
+                      }}
+                    />
                   </div>
 
                   <MDBRow>
@@ -164,20 +236,33 @@ export default function SignUpPage() {
                     size="lg"
                     id="form3"
                     type="text"
+                    onChange={(e) => {
+                      setData({ ...data, address: e.target.value });
+                    }}
                   />
                   <MDBInput
                     wrapperClass="mb-4"
                     label="Pincode"
                     size="lg"
                     id="form4"
-                    type="text"
+                    type="number"
+                    onChange={(e) => {
+                      setData({ ...data, pincode: e.target.value });
+                    }}
+                    min={100000}
+                    max={999999}
                   />
 
                   <div className="d-flex justify-content-end pt-3">
                     <MDBBtn color="light" size="lg">
                       Reset all
                     </MDBBtn>
-                    <MDBBtn className="ms-2" color="warning" size="lg">
+                    <MDBBtn
+                      className="ms-2"
+                      color="warning"
+                      size="lg"
+                      onClick={submit}
+                    >
                       Submit form
                     </MDBBtn>
                   </div>
