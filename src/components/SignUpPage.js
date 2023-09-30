@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   MDBBtn,
@@ -19,9 +20,14 @@ import {
 import "../css/SignUp.css";
 
 export default function SignUpPage() {
+  const navigate = useNavigate();
   const [whoAreYou, setWhoAreYou] = useState("Who Are You ?");
 
   const [data, setData] = useState({});
+
+  const goHome=()=>{
+    navigate("/")
+  }
 
   const changeWhoAreYou = (event, who) => {
     setWhoAreYou(who);
@@ -37,10 +43,12 @@ export default function SignUpPage() {
   };
 
   const submit = (event) => {
+    console.log(data)
     event.preventDefault();
   };
   return (
-    <MDBContainer
+
+ <MDBContainer
       fluid
       className="bg-dark"
       style={{ height: "100%", scrollbarColor: "gray" }}
@@ -67,7 +75,9 @@ export default function SignUpPage() {
                   <MDBDropdown style={{ paddingBottom: "50px" }}>
                     <MDBDropdownToggle
                       tag="a"
-                      className="btn btn-primary"
+                      className="btn outline-primary "
+                      
+            
                       style={{ textAlign: "center", outline: "all" }}
                     >
                       {whoAreYou}
@@ -252,14 +262,24 @@ export default function SignUpPage() {
                     min={100000}
                     max={999999}
                   />
+                      <MDBInput
+                    wrapperClass="mb-4"
+                    label="generate password"
+                    size="lg"
+                    id="password"
+                    type="password"
+                    onChange={(e) => {
+                      setData({ ...data, password: e.target.value });
+                    }}
+                  />
 
                   <div className="d-flex justify-content-end pt-3">
-                    <MDBBtn color="light" size="lg">
-                      Reset all
+                    <MDBBtn color="light" size="lg" onClick={goHome}>
+                     Go To Home
                     </MDBBtn>
                     <MDBBtn
                       className="ms-2"
-                      color="warning"
+                      color="success"
                       size="lg"
                       onClick={submit}
                     >
@@ -273,5 +293,8 @@ export default function SignUpPage() {
         </MDBCol>
       </MDBRow>
     </MDBContainer>
+
+ 
+   
   );
 }
