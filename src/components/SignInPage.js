@@ -23,31 +23,20 @@ useEffect(()=>{
 },[]);
 
   const navigate = useNavigate();
-  const [whoAreYou, setWhoAreYou] = useState("Who Are You ?");
 
   const [data, setData] = useState({});
 
-  const changeWhoAreYou = (event, who) => {
-    setWhoAreYou(who);
-
-    setData({ ...data, role: who });
-
-    var x = document.getElementById("myDIV");
-    if (who === "Lawyer") {
-      x.style.display = "block";
-    } else {
-      x.style.display = "none";
-    }
-  };
 
   const goHome=()=>{
     navigate("/")
-
-
   }
 
   const submit = (event) => {
     console.log(data)
+    if(data.username === "admin" || data.password==="admin")
+    {
+      navigate("/get-all")
+    }
     event.preventDefault();
   };
   return (

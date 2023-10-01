@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
+import { toast } from "react-toastify";
 import {
   MDBBtn,
   MDBContainer,
@@ -18,16 +19,18 @@ import {
 } from "mdb-react-ui-kit";
 
 import "../css/SignUp.css";
+import BASE_URL from "../constants/Constants";
 
 export default function SignUpPage() {
   const navigate = useNavigate();
   const [whoAreYou, setWhoAreYou] = useState("Who Are You ?");
 
   const [data, setData] = useState({});
+  const [image, setImage] = useState({});
 
-  const goHome=()=>{
-    navigate("/")
-  }
+  const goHome = () => {
+    navigate("/");
+  };
 
   const changeWhoAreYou = (event, who) => {
     setWhoAreYou(who);
@@ -42,13 +45,109 @@ export default function SignUpPage() {
     }
   };
 
-  const submit = (event) => {
-    console.log(data)
+  const submit = (event, data) => {
+    console.log(data);
+    callAxios(data);
+
     event.preventDefault();
   };
-  return (
 
- <MDBContainer
+  const callSaveImage = async () => {
+
+
+    console.log(image.govtIdProff)
+    const t = await axios
+      .post(
+        `${BASE_URL}/image/upload`,
+        {
+          name: "gid",
+          email: data.email,
+          image: image.govtIdProff,
+        },
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      )
+      .then(({ data }) => console.log("_____________" + JSON.stringify(data)));
+    
+      console.log(t)
+      if (data.role === "Lawyer") {
+       axios
+        .post(
+          `${BASE_URL}/image/upload`,
+          {
+            name: "cert",
+            email: data.email,
+            image: image.lawCertficate,
+          },
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        )
+        .then(({ data }) => {
+          console.log(data)
+          toast.success("RequestSent : Pending for approval", {
+            position: "top-left",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+
+          navigate("/");
+        });
+    } else {
+      toast.success("RequestSent : Pending for approval", {
+        position: "top-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+
+      navigate("/");
+    }
+  };
+
+  const callAxios = () => {
+    axios.post(`${BASE_URL}/sign-up/add-user`, data).then(
+      (response) => {
+        console.log(response);
+        setData({ ...data, id: response.data.data.id });
+        callSaveImage();
+      },
+      (error) => {
+        console.log(error);
+        toast.error("something went wrong", {
+          position: "top-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
+    );
+  };
+
+  useEffect(() => {
+    document.title = "Sign Up";
+  }, []);
+  return (
+    <MDBContainer
+      id="formFill"
       fluid
       className="bg-dark"
       style={{ height: "100%", scrollbarColor: "gray" }}
@@ -63,7 +162,7 @@ export default function SignUpPage() {
                   alt="Sample photo"
                   className="rounded-start my-3"
                   fluid
-                  style={{ height: "66%"}}
+                  style={{ height: "90vh" }}
                 />
               </MDBCol>
 
@@ -76,8 +175,6 @@ export default function SignUpPage() {
                     <MDBDropdownToggle
                       tag="a"
                       className="btn outline-primary "
-                      
-            
                       style={{ textAlign: "center", outline: "all" }}
                     >
                       {whoAreYou}
@@ -215,7 +312,7 @@ export default function SignUpPage() {
                     size="lg"
                     type="file"
                     onChange={(e) => {
-                      setData({ ...data, govtIdProff: e.target.files[0] });
+                      setImage({ ...image, govtIdProff: e.target.files[0] });
                     }}
                   />
 
@@ -229,7 +326,10 @@ export default function SignUpPage() {
                       type="file"
                       name="certificate"
                       onChange={(e) => {
-                        setData({ ...data, lawCertficate: e.target.files[0] });
+                        setImage({
+                          ...image,
+                          lawCertficate: e.target.files[0],
+                        });
                       }}
                     />
                   </div>
@@ -262,7 +362,7 @@ export default function SignUpPage() {
                     min={100000}
                     max={999999}
                   />
-                      <MDBInput
+                  <MDBInput
                     wrapperClass="mb-4"
                     label="generate password"
                     size="lg"
@@ -275,13 +375,13 @@ export default function SignUpPage() {
 
                   <div className="d-flex justify-content-end pt-3">
                     <MDBBtn color="light" size="lg" onClick={goHome}>
-                     Go To Home
+                      Go To Home
                     </MDBBtn>
                     <MDBBtn
                       className="ms-2"
                       color="success"
                       size="lg"
-                      onClick={submit}
+                      onClick={(e) => submit(e, data)}
                     >
                       Submit form
                     </MDBBtn>
@@ -293,8 +393,5 @@ export default function SignUpPage() {
         </MDBCol>
       </MDBRow>
     </MDBContainer>
-
- 
-   
   );
 }
